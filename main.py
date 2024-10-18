@@ -1,3 +1,4 @@
+import itertools
 import numbers
 from datetime import timedelta
 
@@ -5,8 +6,9 @@ class TimeZone:
     def __init__(self, name, offset_hours, offset_minutes):
         if name is None or len(str(name).strip()) == 0:
             raise ValueError('Timezone name cannot be empty.')
-        self._name = str(name).strip()
 
+        self._name = str(name).strip()
+        # technically we should check that offset is a
         if not isinstance(offset_hours, numbers.Integral):
             raise ValueError('Hour offset must be an integer.')
 
@@ -16,7 +18,11 @@ class TimeZone:
         if offset_minutes > 59 or offset_minutes < -59:
             raise ValueError('Minute offset must be between -59 and 59 (inclusive).')
 
+        # for time delta sign of minutes will be set to sign of hours
         offset = timedelta(hours=offset_hours, minutes=offset_minutes)
+
+        # offsets are technically bounded between -12:00 and 14:00
+        # see: https://en.wikipedia.org/wiki/list_of_UTC_time_offsets
         if offset < timedelta(hours=-12, minutes=0) or offset > timedelta(hours=14, minutes=0):
             raise ValueError('Offset must be between -12:00 and +14:00.')
 
@@ -44,21 +50,5 @@ class TimeZone:
                 f"offset_hours={self._offset_hours}, "
                 f"offset_minutes={self._offset_minutes})")
 
-
-tz1 = TimeZone('ABC', -2, -15)
-print(tz1.name)
-
-from datetime import datetime
-dt = datetime.utcnow()
-print(dt)
-print(dt + tz1.offset)
-
-try:
-    tz = TimeZone('', 0, 0)
-except ValueError as ex:
-    print(ex)
-
-try:
-    tz = TimeZone('ABC', 18, 0)
-except ValueError as ex:
-    print(ex)
+class Account:
+    transaction_counter = itertools.count(100)
