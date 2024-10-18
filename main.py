@@ -51,6 +51,7 @@ class TimeZone:
 
 class Account:
     transaction_counter = itertools.count(100)
+    _interest_rate = 0.5  # percent
 
     def __init__(self, account_number, first_name, last_name,
                  timezone=None, initial_balance=0):
@@ -104,14 +105,31 @@ class Account:
             raise ValueError('Time Zone must be a valid TimeZone object.')
         self._timezone = value
 
+    @classmethod
+    def get_interest_rate(cls):
+        return cls._interest_rate
+
+    @classmethod
+    def set_interest_rate(cls, value):
+        if not isinstance(value, numbers.Real):
+            raise ValueError('Interest rate must be a real number.')
+
+
     def validate_and_set_name(self, attr_name, value, field_title):
         if value is None or len(str(value).strip()) == 0:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
 
+a1 = Account('1234', 'Monty', 'Python')
+a2 = Account('2345', 'John', 'Cleese')
 
+print(a1.interest_rate, a2.interest_rate)
+Account.interest_rate = 10
 
-
+print(a1.interest_rate, a2.interest_rate)
+a1.interest_rate = 100
+print(a1.interest_rate, a2.interest_rate)
+print(a1.__dict__, a2.__dict__, Account.__dict__)
 
 
 
