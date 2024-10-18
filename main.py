@@ -110,13 +110,7 @@ class Account:
         setattr(self, attr_name, value)
 
 
-a = Account('1234', 'John', 'Cleese', initial_balance=100)
-print(a.balance)
 
-try:
-    a.balance = 200
-except AttributeError as ex:
-    print(ex)
 
 
 
