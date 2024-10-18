@@ -68,9 +68,7 @@ class Account:
 
     @first_name.setter
     def first_name(self, value):
-        if len(str(value).strip()) == 0:
-            raise ValueError('First name cannot be empty.')
-        self._first_name = value
+        self._first_name = Account.validate_name(value, 'First Name')
 
     @property
     def last_name(self):
@@ -78,13 +76,26 @@ class Account:
 
     @last_name.setter
     def last_name(self, value):
-        if len(str(value).strip()) == 0:
-            raise ValueError('Last name cannot be empty.')
-        self._last_name = value
+        self._last_name = Account.validate_name(value, 'Last Name')
+
+    @staticmethod
+    def validate_name(value, field_title):
+        if value is None or len(str(value).strip()) == 0:
+            raise ValueError(f'{field_title} cannot be empty.')
+        return str(value).strip()
 
 
+try:
+    a = Account('12345', 'John', '')
+except ValueError as ex:
+    print(ex)
 
+try:
+    a = Account('12345', 'John', None)
+except ValueError as ex:
+    print(ex)
 
+print(str(None))
 
 
 
