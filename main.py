@@ -2,6 +2,8 @@ import itertools
 import numbers
 from datetime import timedelta
 from datetime import datetime
+from collections import namedtuple
+
 
 class TimeZone:
     def __init__(self, name, offset_hours, offset_minutes):
@@ -138,6 +140,24 @@ class Account:
     def make_transaction(self):
         return self.generate_confirmation_code('dummy')
 
+    @staticmethod
+    def parse_confirmation_code(confirmation_code, preferred_time_zone=None):
+        # dummy-A100-201904035145530-101
+        parts = confirmation_code.split('-')
+        if len(parts) != 4:
+            raise ValueError('Invalid confirmation code')
+
+        transaction_code, account_number, raw_dt_utc, transaction_id = parts
+        try:
+            dt_utc = datetime.strptime(raw_dt_utc, '%Y%m%d%H%S')
+        except ValueError as ex:
+            raise ValueError('Invalid transaction')
+
+
+
+
+
+
 a = Account('A100', 'Eric', 'Idle')
 
 print(a.make_transaction())
@@ -146,4 +166,4 @@ print(a.make_transaction())
 a2 = Account('A200', 'John', 'Cleese')
 print(a2.make_transaction())
 
-
+Confirmation = namedtuple('Confirmation', 'account_number transaction_code transaction_id time_utc time')
