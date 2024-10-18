@@ -53,10 +53,15 @@ class TimeZone:
 class Account:
     transaction_counter = itertools.count(100)
 
-    def __init__(self, account_number, first_name, last_name):
+    def __init__(self, account_number, first_name, last_name,
+                 timezone=None):
         self._account_number = account_number
         self.first_name = first_name
         self.last_name = last_name
+
+        if timezone is None:
+            timezone = TimeZone('UTC', 0, 0)
+        self.timezone = timezone
 
     @property
     def account_number(self):
@@ -77,6 +82,11 @@ class Account:
     @last_name.setter
     def last_name(self, value):
         self.validate_and_set_name('_last_name', value, 'Last Name')
+
+    # also going to create a full_name computed property, for ease of use
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
 
     def validate_and_set_name(self, attr_name, value, field_title):
         if value is None or len(str(value).strip()) == 0:
