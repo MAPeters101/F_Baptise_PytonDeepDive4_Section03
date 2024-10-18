@@ -53,6 +53,13 @@ class Account:
     transaction_counter = itertools.count(100)
     _interest_rate = 0.5  # percent
 
+    _transaction_codes = {
+        'deposit': 'D',
+        'withdraw': 'W',
+        'interest': 'I',
+        'rejected': 'X'
+    }
+
     def __init__(self, account_number, first_name, last_name,
                  timezone=None, initial_balance=0):
         # in practice we probably would want to add checks to make sure these values are valid / non-empty
