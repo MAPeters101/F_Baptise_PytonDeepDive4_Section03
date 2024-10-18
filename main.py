@@ -126,15 +126,24 @@ class Account:
             raise ValueError('Interest rate cannot be negative.')
         cls._interest_rate = value
 
+    def generate_confirmation_code(self, transaction_code):
+        dt_str = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+        return f'{transaction_code}-{self.account_number}-{dt_str}-{next(Account.transaction_counter)}'
 
     def validate_and_set_name(self, attr_name, value, field_title):
         if value is None or len(str(value).strip()) == 0:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
 
+    def make_transaction(self):
+        return self.generate_confirmation_code('dummy')
 
-def generate_confirmation_code(account_number, transaction_id, transaction_code):
-    dt_str = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-    return(f'{transaction_code}-{account_number}-{dt_str}-{transaction_id}')
+a = Account('A100', 'Eric', 'Idle')
 
-print(generate_confirmation_code(123, 1000, 'X'))
+print(a.make_transaction())
+print(a.make_transaction())
+
+a2 = Account('A200', 'John', 'Cleese')
+print(a2.make_transaction())
+
+
