@@ -124,33 +124,6 @@ class Account:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
 
-a1 = Account('1234', 'Monty', 'Python')
-a2 = Account('2345', 'John', 'Cleese')
-
-# print(a1.interest_rate, a2.interest_rate)
-# Account.interest_rate = 10
-#
-# print(a1.interest_rate, a2.interest_rate)
-# a1.interest_rate = 100
-# print(a1.interest_rate, a2.interest_rate)
-# print(a1.__dict__, a2.__dict__, Account.__dict__)
-#
-
-print(Account.get_interest_rate())
-
-Account.set_interest_rate(10)
-print(Account.get_interest_rate())
-
-try:
-    Account.set_interest_rate(1+1j)
-except ValueError as ex:
-    print(ex)
-
-try:
-    Account.set_interest_rate(-10)
-except ValueError as ex:
-    print(ex)
-
 
 
 
