@@ -53,7 +53,7 @@ class Account:
     transaction_counter = itertools.count(100)
 
     def __init__(self, account_number, first_name, last_name,
-                 timezone=None):
+                 timezone=None, initial_balance=0):
         # in practice we probably would want to add checks to make sure these values are valid / non-empty
         self._account_number = account_number
         self.first_name = first_name
@@ -62,6 +62,8 @@ class Account:
         if timezone is None:
             timezone = TimeZone('UTC', 0, 0)
         self.timezone = timezone
+
+        self._balance = float(initial_balance)
 
     @property
     def account_number(self):
@@ -89,6 +91,10 @@ class Account:
         return f'{self.first_name} {self.last_name}'
 
     @property
+    def balance(self):
+        return self._balance
+
+    @property
     def timezone(self):
         return self._timezone
 
@@ -102,6 +108,15 @@ class Account:
         if value is None or len(str(value).strip()) == 0:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
+
+
+a = Account('1234', 'John', 'Cleese', initial_balance=100)
+print(a.balance)
+
+try:
+    a.balance = 200
+except AttributeError as ex:
+    print(ex)
 
 
 
