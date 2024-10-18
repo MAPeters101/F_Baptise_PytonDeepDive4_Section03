@@ -30,7 +30,6 @@ class TimeZone:
         self._offset_minutes = offset_minutes
         self._offset = offset
 
-
     @property
     def offset(self):
         return self._offset
@@ -55,6 +54,7 @@ class Account:
 
     def __init__(self, account_number, first_name, last_name,
                  timezone=None):
+        # in practice we probably would want to add checks to make sure these values are valid / non-empty
         self._account_number = account_number
         self.first_name = first_name
         self.last_name = last_name
@@ -102,21 +102,6 @@ class Account:
         if value is None or len(str(value).strip()) == 0:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
-
-# try:
-#     a = Account('123', 'John', 'Cleese', '-7:00')
-# except ValueError as ex:
-#     print(ex)
-#
-try:
-    a = Account('123', 'John', 'Cleese')
-except ValueError as ex:
-    print(ex)
-
-print(a.timezone)
-
-a.timezone = TimeZone('MST', -7, 0)
-print(a.timezone)
 
 
 
