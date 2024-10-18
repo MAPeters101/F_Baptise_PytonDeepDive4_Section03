@@ -85,18 +85,8 @@ class Account:
         return str(value).strip()
 
 
-try:
-    a = Account('12345', None, None)
-except ValueError as ex:
-    print(ex)
 
-try:
-    a = Account('12345', 'John', 'Martelli')
-except ValueError as ex:
-    print(ex)
 
-print(a.first_name)
-print(a.last_name)
 
 
 
