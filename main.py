@@ -88,13 +88,35 @@ class Account:
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
+    @property
+    def timezone(self):
+        return self._timezone
+
+    @timezone.setter
+    def timezone(self, value):
+        if not isinstance(value, TimeZone):
+            raise ValueError('Time Zone must be a valid TimeZone object.')
+        self._timezone = value
+
     def validate_and_set_name(self, attr_name, value, field_title):
         if value is None or len(str(value).strip()) == 0:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
-        return str(value).strip()
 
+# try:
+#     a = Account('123', 'John', 'Cleese', '-7:00')
+# except ValueError as ex:
+#     print(ex)
+#
+try:
+    a = Account('123', 'John', 'Cleese')
+except ValueError as ex:
+    print(ex)
 
+print(a.timezone)
+
+a.timezone = TimeZone('MST', -7, 0)
+print(a.timezone)
 
 
 
