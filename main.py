@@ -1,6 +1,7 @@
 import itertools
 import numbers
 from datetime import timedelta
+from datetime import datetime
 
 class TimeZone:
     def __init__(self, name, offset_hours, offset_minutes):
@@ -132,5 +133,8 @@ class Account:
         setattr(self, attr_name, value)
 
 
+def generate_confirmation_code(account_number, transaction_id, transaction_code):
+    dt_str = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    return(f'{transaction_code}-{account_number}-{dt_str}-{transaction_id}')
 
-
+print(generate_confirmation_code(123, 1000, 'X'))
