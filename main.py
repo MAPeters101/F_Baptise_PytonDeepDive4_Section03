@@ -134,6 +134,16 @@ class Account:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
 
+    @staticmethod
+    def validate_real_number(value, min_value=None):
+        if not isinstance(value, numbers.Real):
+            raise ValueError('Value must be a real number.')
+
+        if min_value is not None and value < min_value:
+            raise ValueError(f'Value must be at least {min_value}.')
+
+        return value
+
     def generate_confirmation_code(self, transaction_code):
         # Main difficulty here is to generate the current time in UTC using this formatting:
         # YYYYMMDDHHMMSS
@@ -169,19 +179,14 @@ class Account:
                             transaction_id, dt_utc.isoformat(), dt_preferred)
 
     def deposit(self, value):
-        if not isinstance(value, numbers.Real):
-            raise ValueError('Deposit must be a real number.')
-        if value <= 0:
-            raise ValueError('Deposit value must be a positive number.')
-
+        value = Account.validate_real_number(value, 0.01)
         transaction_code = Account._transaction_codes['deposit']
         conf_code = self.generate_confirmation_code(transaction_code)
         self._balance += value
         return conf_code
 
     def withdraw(self, value):
-        # TODO: Refactor to use common validation here and in deposit method
-
+        value = Account.validate_real_number(value, 0.01)
         accepted = False
         if self.balance - value < 0:
             transaction_code = Account._transaction_codes['rejected']
@@ -219,4 +224,14 @@ print(a.balance)
 print(a.withdraw(100))
 print(a.balance)
 
+try:
+    a.withdraw(-10)
+except ValueError as ex:
+    print(ex)
+
+try:
+    a.withdraw(10)
+except ValueError as ex:
+    print(ex)
+print(a.balance)
 
