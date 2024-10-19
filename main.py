@@ -206,5 +206,25 @@ class Account:
         self._balance += interest
         return conf_code
 
+a = Account('A100', 'Eric', 'Idle', timezone=TimeZone('MST', -7, 0), initial_balance=100)
+
+print(a.balance)
+#assert
+assert 1 == 1
+#assert 1 == 2
+
+print(a.deposit(150.02))
+print(a.balance)
+print(a.withdraw(0.02))
+print(a.balance)
+print(Account.set_interest_rate(1.0))
+print(a.get_interest_rate())
+print(a.pay_interest())
+print(a.balance)
+print(a.withdraw(1000))
+
+
+
+
 
 
