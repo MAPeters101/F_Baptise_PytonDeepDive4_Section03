@@ -3,6 +3,8 @@ import numbers
 from datetime import timedelta
 from datetime import datetime
 from collections import namedtuple
+import unittest
+
 Confirmation = namedtuple('Confirmation', 'account_number transaction_code transaction_id time_utc time')
 
 
@@ -206,22 +208,19 @@ class Account:
         self._balance += interest
         return conf_code
 
-a = Account('A100', 'Eric', 'Idle', timezone=TimeZone('MST', -7, 0), initial_balance=100)
+def run_tests(test_class):
+    suite = unittest.TestLoader().loadTestsFromTestCase(test_class)
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite)
 
-print(a.balance)
-#assert
-assert 1 == 1
-#assert 1 == 2
+class TestAccount(unittest.TestCase):
+    def test_ok(self):
+        #assert 1 == 0
+        self.assertEqual(1, 0)
 
-print(a.deposit(150.02))
-print(a.balance)
-print(a.withdraw(0.02))
-print(a.balance)
-print(Account.set_interest_rate(1.0))
-print(a.get_interest_rate())
-print(a.pay_interest())
-print(a.balance)
-print(a.withdraw(1000))
+run_tests(TestAccount)
+
+
 
 
 
