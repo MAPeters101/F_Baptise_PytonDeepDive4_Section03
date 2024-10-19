@@ -168,8 +168,35 @@ class Account:
         return Confirmation(account_number, transaction_code,
                             transaction_id, dt_utc.isoformat(), dt_preferred)
 
-    def make_transaction(self):
-        return self.generate_confirmation_code('dummy')
+    def deposit(self, value):
+        if not isinstance(value, numbers.Real):
+            raise ValueError('Deposit must be a real number.')
+        if value <= 0:
+            raise ValueError('Deposit value must be a positive number.')
+
+        transaction_code = Account._transaction_codes['deposit']
+        conf_code = self.generate_confirmation_code(transaction_code)
+        self._balance += value
+        return conf_code
+
+    def withdraw(self, value):
+        # TODO: Refactor to use common validation here and in deposit method
+
+        accepted = False
+        if self.balance - value < 0:
+            transaction_code = Account._transaction_codes['rejected']
+        else:
+            accepted = True
+            transaction_code = Account._transaction_codes['withdraw']
+
+        conf_code = self.generate_confirmation_code(transaction_code)
+        if accepted:
+            self._balance -= value
+
+        return conf_code
+
+
+
 
 
 
