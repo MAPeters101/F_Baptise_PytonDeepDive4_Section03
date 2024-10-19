@@ -206,32 +206,5 @@ class Account:
         self._balance += interest
         return conf_code
 
-a = Account('A100', 'Eric', 'Idle', initial_balance=100)
-print(a.balance)
 
-try:
-    a.deposit(-100)
-except ValueError as ex:
-    print(ex)
-
-try:
-    a.deposit(100)
-except ValueError as ex:
-    print(ex)
-print(a.balance)
-a.withdraw(150)
-print(a.balance)
-print(a.withdraw(100))
-print(a.balance)
-
-try:
-    a.withdraw(-10)
-except ValueError as ex:
-    print(ex)
-
-try:
-    a.withdraw(10)
-except ValueError as ex:
-    print(ex)
-print(a.balance)
 
