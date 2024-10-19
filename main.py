@@ -195,8 +195,28 @@ class Account:
 
         return conf_code
 
+    def pay_interest(self):
+        interest = self.balance * Account.get_interest_rate() / 100
+        conf_code = self.generate_confirmation_code(self._transaction_codes['interest'])
+        self._balance += interest
+        return conf_code
 
+a = Account('A100', 'Eric', 'Idle', initial_balance=100)
+print(a.balance)
 
+try:
+    a.deposit(-100)
+except ValueError as ex:
+    print(ex)
 
+try:
+    a.deposit(100)
+except ValueError as ex:
+    print(ex)
+print(a.balance)
+a.withdraw(150)
+print(a.balance)
+print(a.withdraw(100))
+print(a.balance)
 
 
