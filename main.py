@@ -3,6 +3,7 @@ import numbers
 from datetime import timedelta
 from datetime import datetime
 from collections import namedtuple
+Confirmation = namedtuple('Confirmation', 'account_number transaction_code transaction_id time_utc time')
 
 
 class TimeZone:
@@ -149,9 +150,21 @@ class Account:
 
         transaction_code, account_number, raw_dt_utc, transaction_id = parts
         try:
-            dt_utc = datetime.strptime(raw_dt_utc, '%Y%m%d%H%S')
+            dt_utc = datetime.strptime(raw_dt_utc, '%Y%m%d%H%M%S')
         except ValueError as ex:
-            raise ValueError('Invalid transaction')
+            raise ValueError('Invalid transaction datetime.') from ex
+
+        if preferred_time_zone is None:
+            preferred_time_zone = TimeZone('UTC', 0, 0)
+
+        if not isinstance(preferred_time_zone, TimeZone):
+            raise ValueError('Invalid TimeZone specified.')
+
+        dt_preferred = dt_utc + preferred_time_zone.offset
+        dt_preferred_str = f"{dt_preferred.strftime('%Y-%m-%d %H:%M:%S')} ({preferred_time_zone.name})"
+
+        return Confirmation(account_number, transaction_code,
+                            transaction_id, dt_utc.isoformat(), dt_preferred)
 
 
 
@@ -159,11 +172,38 @@ class Account:
 
 
 a = Account('A100', 'Eric', 'Idle')
+conf_code = a.make_transaction()
+print(conf_code)
+print(Account.parse_confirmation_code(conf_code))
 
-print(a.make_transaction())
-print(a.make_transaction())
 
-a2 = Account('A200', 'John', 'Cleese')
-print(a2.make_transaction())
+print(Account.parse_confirmation_code(conf_code, preferred_time_zone=TimeZone('XYZ', -1, 0)))
 
-Confirmation = namedtuple('Confirmation', 'account_number transaction_code transaction_id time_utc time')
+try:
+    print(Account.parse_confirmation_code('dummy-A100-20241018235512-100'))
+except ValueError as ex:
+    print(ex)
+
+try:
+    print(Account.parse_confirmation_code('dummy-A100-20241018235512-100-sdjhagsd'))
+except ValueError as ex:
+    print(ex)
+
+try:
+    print(Account.parse_confirmation_code('dummy-A100-20241318235512-100'))
+except ValueError as ex:
+    print(ex)
+
+#print(Account.parse_confirmation_code('dummy-A100-20241318235512-100'))
+
+try:
+    print(Account.parse_confirmation_code('dummy-A100-20241318235512-100'))
+except ValueError as ex:
+    print(ex)
+    print(ex.__cause__)
+
+# print(a.make_transaction())
+#
+# a2 = Account('A200', 'John', 'Cleese')
+# print(a2.make_transaction())
+#
