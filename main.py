@@ -129,29 +129,31 @@ class Account:
             raise ValueError('Interest rate cannot be negative.')
         cls._interest_rate = value
 
-    def generate_confirmation_code(self, transaction_code):
-        dt_str = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-        return f'{transaction_code}-{self.account_number}-{dt_str}-{next(Account.transaction_counter)}'
-
     def validate_and_set_name(self, attr_name, value, field_title):
         if value is None or len(str(value).strip()) == 0:
             raise ValueError(f'{field_title} cannot be empty.')
         setattr(self, attr_name, value)
 
-    def make_transaction(self):
-        return self.generate_confirmation_code('dummy')
+    def generate_confirmation_code(self, transaction_code):
+        # Main difficulty here is to generate the current time in UTC using this formatting:
+        # YYYYMMDDHHMMSS
+        dt_str = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+        return f'{transaction_code}-{self.account_number}-{dt_str}-{next(Account.transaction_counter)}'
 
     @staticmethod
     def parse_confirmation_code(confirmation_code, preferred_time_zone=None):
         # dummy-A100-201904035145530-101
         parts = confirmation_code.split('-')
         if len(parts) != 4:
+            # Really simplistic validation here - would need something better
             raise ValueError('Invalid confirmation code')
 
+        # Unpack into separate variables
         transaction_code, account_number, raw_dt_utc, transaction_id = parts
         try:
             dt_utc = datetime.strptime(raw_dt_utc, '%Y%m%d%H%M%S')
         except ValueError as ex:
+            # Probably need better error handling here
             raise ValueError('Invalid transaction datetime.') from ex
 
         if preferred_time_zone is None:
@@ -166,44 +168,8 @@ class Account:
         return Confirmation(account_number, transaction_code,
                             transaction_id, dt_utc.isoformat(), dt_preferred)
 
+    def make_transaction(self):
+        return self.generate_confirmation_code('dummy')
 
 
 
-
-
-a = Account('A100', 'Eric', 'Idle')
-conf_code = a.make_transaction()
-print(conf_code)
-print(Account.parse_confirmation_code(conf_code))
-
-
-print(Account.parse_confirmation_code(conf_code, preferred_time_zone=TimeZone('XYZ', -1, 0)))
-
-try:
-    print(Account.parse_confirmation_code('dummy-A100-20241018235512-100'))
-except ValueError as ex:
-    print(ex)
-
-try:
-    print(Account.parse_confirmation_code('dummy-A100-20241018235512-100-sdjhagsd'))
-except ValueError as ex:
-    print(ex)
-
-try:
-    print(Account.parse_confirmation_code('dummy-A100-20241318235512-100'))
-except ValueError as ex:
-    print(ex)
-
-#print(Account.parse_confirmation_code('dummy-A100-20241318235512-100'))
-
-try:
-    print(Account.parse_confirmation_code('dummy-A100-20241318235512-100'))
-except ValueError as ex:
-    print(ex)
-    print(ex.__cause__)
-
-# print(a.make_transaction())
-#
-# a2 = Account('A200', 'John', 'Cleese')
-# print(a2.make_transaction())
-#
