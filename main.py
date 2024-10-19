@@ -214,9 +214,30 @@ def run_tests(test_class):
     runner.run(suite)
 
 class TestAccount(unittest.TestCase):
-    def test_ok(self):
-        #assert 1 == 0
-        self.assertEqual(1, 0)
+    def test_create_timezone(self):
+        tz = TimeZone('ABC', -1, -30)
+        self.assertEqual('ABC', tz.name)
+        self.assertEqual(timedelta(hours=-1, minutes=-30), tz.offset)
+
+    def test_timezone_equal(self):
+        tz1 = TimeZone('ABC', -1, -30)
+        tz2 = TimeZone('ABC', -1, -30)
+        self.assertEqual(tz1, tz2)
+
+    def test_timezone_not_equal(self):
+        tz = TimeZone('ABC', -1, -30)
+
+        test_timezones = (
+            TimeZone('DEF', -1, -30),
+            TimeZone('ABC', -1, 0),
+            TimeZone('ABC', 1, -30),
+            TimeZone('ABC', -1, -30),
+        )
+
+        for i, test_tz in enumerate(test_timezones):
+            with self.subTest(test_name=f'Test # {i}'):
+                self.assertNotEqual(tz, test_tz)
+
 
 run_tests(TestAccount)
 
