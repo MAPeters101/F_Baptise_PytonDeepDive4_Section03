@@ -231,12 +231,40 @@ class TestAccount(unittest.TestCase):
             TimeZone('DEF', -1, -30),
             TimeZone('ABC', -1, 0),
             TimeZone('ABC', 1, -30),
-            TimeZone('ABC', -1, -30),
         )
 
         for i, test_tz in enumerate(test_timezones):
             with self.subTest(test_name=f'Test # {i}'):
                 self.assertNotEqual(tz, test_tz)
+
+    def test_create_account(self):
+        account_number = 'A100'
+        first_name = 'FIRST'
+        last_name = 'LAST'
+        tz = TimeZone('TZ', 1, 30)
+        balance = 100.00
+
+        a = Account(account_number, first_name, last_name, tz, balance)
+
+        self.assertEqual(account_number, a.account_number)
+        self.assertEqual(first_name, a.first_name)
+        self.assertEqual(last_name, a.last_name)
+        self.assertEqual(first_name + ' ' + last_name, a.full_name)
+        self.assertEqual(tz, a.timezone)
+        self.assertEqual(balance, a.balance)
+
+    def test_create_account_blank_first_name(self):
+        account_number = 'A100'
+        first_name = ''
+        last_name = 'LAST'
+        tz = TimeZone('TZ', 1, 30)
+        balance = 100.00
+
+        with self.assertRaises(ValueError):
+            a = Account(account_number, first_name, last_name)
+
+
+
 
 
 run_tests(TestAccount)
