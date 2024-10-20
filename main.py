@@ -77,7 +77,7 @@ class Account:
             timezone = TimeZone('UTC', 0, 0)
         self.timezone = timezone
 
-        self._balance = float(initial_balance)
+        self._balance = Account.validate_real_number(initial_balance, min_value=0)
 
     @property
     def account_number(self):
@@ -262,6 +262,42 @@ class TestAccount(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             a = Account(account_number, first_name, last_name)
+
+    def test_create_account_negative_balance(self):
+        account_number = 'A100'
+        first_name = 'FIRST'
+        last_name = 'LAST'
+        tz = TimeZone('TZ', 1, 30)
+        balance = -100.00
+
+        with self.assertRaises(ValueError):
+            a = Account(account_number, first_name, last_name, initial_balance=balance)
+
+    def test_account_withdraw_ok(self):
+        account_number = 'A100'
+        first_name = 'FIRST'
+        last_name = 'LAST'
+        tz = TimeZone('TZ', 1, 30)
+        balance = 100.00
+        withdraw_amount = 20
+
+        a = Account(account_number, first_name, last_name, initial_balance=balance)
+        conf_code = a.withdraw(withdraw_amount)
+        self.assertTrue(conf_code.startswith('W-'))
+        self.assertEqual(balance - withdraw_amount, a.balance)
+
+    def test_account_withdraw_overdraw(self):
+        account_number = 'A100'
+        first_name = 'FIRST'
+        last_name = 'LAST'
+        tz = TimeZone('TZ', 1, 30)
+        balance = 100.00
+        withdraw_amount = 200
+
+        a = Account(account_number, first_name, last_name, initial_balance=balance)
+        conf_code = a.withdraw(withdraw_amount)
+        self.assertTrue(conf_code.startswith('X-'))
+        self.assertEqual(balance, a.balance)
 
 
 
