@@ -214,6 +214,17 @@ def run_tests(test_class):
     runner.run(suite)
 
 class TestAccount(unittest.TestCase):
+    def setUp(self):
+        self.account_number = 'A100'
+        self.first_name = 'FIRST'
+        self.last_name = 'LAST'
+        self.tz = TimeZone('TZ', 1, 30)
+        self.balance = 100.00
+        self.withdraw_amount = 200
+
+    def create_account(self):
+        return Account(self.account_number, self.first_name, self.last_name, self.tz, self.balance)
+
     def test_create_timezone(self):
         tz = TimeZone('ABC', -1, -30)
         self.assertEqual('ABC', tz.name)
@@ -238,40 +249,23 @@ class TestAccount(unittest.TestCase):
                 self.assertNotEqual(tz, test_tz)
 
     def test_create_account(self):
-        account_number = 'A100'
-        first_name = 'FIRST'
-        last_name = 'LAST'
-        tz = TimeZone('TZ', 1, 30)
-        balance = 100.00
-
-        a = Account(account_number, first_name, last_name, tz, balance)
-
-        self.assertEqual(account_number, a.account_number)
-        self.assertEqual(first_name, a.first_name)
-        self.assertEqual(last_name, a.last_name)
-        self.assertEqual(first_name + ' ' + last_name, a.full_name)
-        self.assertEqual(tz, a.timezone)
-        self.assertEqual(balance, a.balance)
+        a = self.create_account()
+        self.assertEqual(self.account_number, a.account_number)
+        self.assertEqual(self.first_name, a.first_name)
+        self.assertEqual(self.last_name, a.last_name)
+        self.assertEqual(self.first_name + ' ' + self.last_name, a.full_name)
+        self.assertEqual(self.tz, a.timezone)
+        self.assertEqual(self.balance, a.balance)
 
     def test_create_account_blank_first_name(self):
-        account_number = 'A100'
-        first_name = ''
-        last_name = 'LAST'
-        tz = TimeZone('TZ', 1, 30)
-        balance = 100.00
-
+        self.first_name = ''
         with self.assertRaises(ValueError):
-            a = Account(account_number, first_name, last_name)
+            a = self.create_account()
 
     def test_create_account_negative_balance(self):
-        account_number = 'A100'
-        first_name = 'FIRST'
-        last_name = 'LAST'
-        tz = TimeZone('TZ', 1, 30)
-        balance = -100.00
-
+        self.balance = -100.00
         with self.assertRaises(ValueError):
-            a = Account(account_number, first_name, last_name, initial_balance=balance)
+            a = self.create_account()
 
     def test_account_withdraw_ok(self):
         account_number = 'A100'
